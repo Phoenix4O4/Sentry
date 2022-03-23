@@ -1,4 +1,4 @@
-module.exports = function(exphbs,app,keycloak) {
+module.exports = function(exphbs,app) {
     var hbs = exphbs.create({
         // Specify helpers which are only registered on this instance. 
         helpers: {
