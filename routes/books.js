@@ -1,5 +1,9 @@
-module.exports = function (app, pool,Logger, keycloak) {
-    app.get('/get-books', keycloak.protect('manage_books'), function (req, res) {
+module.exports = function (app, pool,Logger) {
+    app.get('/get-books', function (req, res) {
+        if (!req.user) {
+            res.sendStatus(500);
+            return;
+        }
         var options = {
             skip: 0,
             limit: 10
@@ -31,7 +35,11 @@ module.exports = function (app, pool,Logger, keycloak) {
             });
         });
     });
-    app.get('/find-books', keycloak.protect('manage_books'), function (req, res) {
+    app.get('/find-books', function (req, res) {
+        if (!req.user) {
+            res.sendStatus(500);
+            return;
+        }
         if(!req.query.title) {
             res.sendStatus(500);
             return;
@@ -59,7 +67,11 @@ module.exports = function (app, pool,Logger, keycloak) {
             });
         });
     });
-    app.get('/total-books', keycloak.protect('manage_books'), function (req, res) {
+    app.get('/total-books', function (req, res) {
+        if (!req.user) {
+            res.sendStatus(500);
+            return;
+        }
         pool.getConnection(function (err, connection) {
             if (err) {
                 console.log(err);
@@ -83,8 +95,8 @@ module.exports = function (app, pool,Logger, keycloak) {
             });
         });
     });
-    app.get('/get-book', keycloak.protect('manage_books'), function (req, res) {
-        if (!req.query.id) {
+    app.get('/get-book', function (req, res) {
+        if (!req.user || !req.query.id) {
             res.sendStatus(500);
             return;
         }
@@ -114,8 +126,8 @@ module.exports = function (app, pool,Logger, keycloak) {
             });
         });
     });
-    app.post('/delete_book', keycloak.protect('manage_books'), function (req, res) {
-        if (!req.body.id) {
+    app.post('/delete-book', function (req, res) {
+        if (!req.user || !req.body.id) {
             res.sendStatus(500);
             return;
         }

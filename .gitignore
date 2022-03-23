@@ -3,4 +3,3 @@ config.json
 /tmp
 /public/status.dat
 .idea
-keycloak.json

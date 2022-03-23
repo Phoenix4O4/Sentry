@@ -1,8 +1,12 @@
 const path = require("path");
 const fs = require("fs");
 
-module.exports = function(app, logroot, keycloak) {
-  app.post("/browselog", keycloak.protect("view_logs"), function(req, res) {
+module.exports = function(app, logroot) {
+  app.post("/browselog", function(req, res) {
+    if (!req.user || !req.user.is_admin) {
+      res.sendStatus(400);
+      return;
+    }
     var logpath = req.body.path;
     if (!logpath) {
       logpath = "/";
@@ -33,7 +37,11 @@ module.exports = function(app, logroot, keycloak) {
       res.send(contents);
     });
   });
-  app.get("/serverlogs/*", keycloak.protect("view_logs"), function(req, res) {
+  app.get("/serverlogs/*", function(req, res) {
+    if (!req.user || !req.user.is_admin) {
+      res.sendStatus(400);
+      return;
+    }
     logpath = path.normalize(logroot + "/" + req.params[0]);
     if (!logpath.startsWith(logroot)) {
       res.sendStatus(404);
